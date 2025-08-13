@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birthday Countdown</title>
+  <style>
+    /* Font + page baseline */
+    @import url("https://fonts.googleapis.com/css?family=Quicksand:300,400");
+    :root { --bg: #dfdaff; --text: rgba(0,0,0,.8); --muted: rgba(0,0,0,.5); }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Quicksand", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Title (keep original look) */
+    .title {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      font-weight: 300;
+      color: rgba(0, 0, 0, 0.25);
+      text-align: center;
+      margin: 0;
+    }
+
+    /* Cake area centered */
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Cake base (matches your original visual) */
+    .cake {
+      width: 200px;
+      height: 40px;
+      background-color: #745a4a;
+      border-radius: 100%;
+      margin-bottom: 120px;
+      /* stacked layers */
+      box-shadow:
+        0 4px 0 #6b5344,
+        0 8px 0 #6b5344,
+        0 12px 0 #6b5344,
+        0 16px 0 #6b5344,
+        0 20px 0 #6b5344,
+        0 24px 0 #6b5344,
+        0 28px 0 #6b5344,
+        0 32px 0 #e76868,
+        0 36px 0 #e76868,
+        0 40px 0 #f8ecc9,
+        0 44px 0 #f8ecc9,
+        0 48px 0 #f8ecc9,
+        0 52px 0 #f8ecc9,
+        0 56px 0 #6b5344,
+        0 60px 0 #6b5344,
+        0 64px 0 #6b5344,
+        0 68px 0 #6b5344,
+        0 72px 0 #6b5344,
+        0 76px 0 #6b5344,
+        0 80px 0 #6b5344;
+      position: relative;
+    }
+    .cake:before {
+      position: absolute;
+      content: "";
+      top: 79px;
+      left: -25px;
+      width: 250px;
+      height: 50px;
+      border-radius: 100%;
+      background: #fff;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+      z-index: -1;
+    }
+
+    /* Candle + flame */
+    .cake__candle {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 40px;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        white, white 5px,
+        #e76868 5px, #e76868 10px
+      );
+    }
+    .cake__candle:before {
+      position: absolute;
+      content: "";
+      top: -20px;
+      left: -4px;
+      width: 15px;
+      height: 15px;
+      background: orange;
+      border-radius: 0 100px 60px 100px;
+      transform: rotate(40deg);
+      /* Correct animation shorthand order so it runs */
+      animation: flicker 0.3s ease infinite;
+    }
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+      20%, 24%, 55% { opacity: 0.4; }
+    }
+
+    /* Clock layout under cake (keep original vibe) */
+    .clock {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      text-align: center;
+    }
+    .clock div { font-size: 16px; color: var(--muted); }
+    .clock span {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">Countdown Until Maggie's Birthday</h1>
+
+  <div class="container">
+    <div class="cake">
+      <div class="cake__candle"></div>
+    </div>
+  </div>
+
+  <div id="js-clock" class="clock">
+    <div class="clock__days">
+      <span id="js-days">0</span>
+      <div>Days</div>
+    </div>
+    <div class="clock__hours">
+      <span id="js-hours">00</span>
+      <div>Hours</div>
+    </div>
+    <div class="clock__minutes">
+      <span id="js-minutes">00</span>
+      <div>Minutes</div>
+    </div>
+    <div class="clock__seconds">
+      <span id="js-seconds">00</span>
+      <div>Seconds</div>
+    </div>
+  </div>
+
+  <script>
+    // Hardcoded for Maggie — July 17
+    const NAME  = 'Maggie';
+    const MONTH = 7; // July
+    const DAY   = 17;
+
+    const elTitle   = document.querySelector('.title');
+    const elClock   = document.getElementById('js-clock');
+    const elDays    = document.getElementById('js-days');
+    const elHours   = document.getElementById('js-hours');
+    const elMinutes = document.getElementById('js-minutes');
+    const elSeconds = document.getElementById('js-seconds');
+
+    function setTitle(text) {
+      if (!elTitle) return;
+      elTitle.textContent = text;
+      // Preserve original style (explicit reset in case of overrides)
+      elTitle.style.fontFamily = '';
+      elTitle.style.fontSize   = '';
+      elTitle.style.color      = '';
+      elTitle.style.textAlign  = 'center';
+    }
+
+    function isTodayBirthday(now = new Date()) {
+      return (now.getMonth() + 1) === MONTH && now.getDate() === DAY;
+    }
+
+    function nextBirthday(from = new Date()) {
+      const y = from.getFullYear();
+      let target = new Date(y, MONTH - 1, DAY, 0, 0, 0, 0); // months 0–11
+      if (target <= from) target = new Date(y + 1, MONTH - 1, DAY, 0, 0, 0, 0);
+      return target;
+    }
+
+    function update() {
+      const now = new Date();
+
+      // Birthday today: show message, hide numbers (cake stays)
+      if (isTodayBirthday(now)) {
+        setTitle(`Happy Birthday, ${NAME}! 🎂`);
+        if (elClock) elClock.style.display = 'none';
+        return;
+      }
+
+      // Normal countdown
+      setTitle(`Countdown Until ${NAME}'s Birthday`);
+      if (elClock) elClock.style.display = '';
+
+      const target   = nextBirthday(now);
+      const diffMs   = target - now;
+      const totalSec = Math.max(0, Math.floor(diffMs / 1000));
+
+      const days  = Math.floor(totalSec / 86400);
+      const hours = Math.floor((totalSec % 86400) / 3600);
+      const mins  = Math.floor((totalSec % 3600) / 60);
+      const secs  = totalSec % 60;
+
+      elDays.textContent    = String(days);
+      elHours.textContent   = String(hours).padStart(2, '0');
+      elMinutes.textContent = String(mins).padStart(2, '0');
+      elSeconds.textContent = String(secs).padStart(2, '0');
+    }
+
+    // Run right away, then every second
+    update();
+    setInterval(update, 1000);
+  </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
